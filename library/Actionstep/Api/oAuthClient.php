@@ -39,6 +39,44 @@ class Actionstep_Api_oAuthClient {
         return $this;
     }
 
+    /**
+     * Use this method to allow your user to login to Actionstep and navigate directly to a resource's user-interface page.
+     * For example you might want the user to be able to goto a Contact record, or open an Action inside of Actionstep.
+     *
+     *
+     * @param $resource
+     * @param $id
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function generateUserInterfaceUrl($resource, $id) {
+
+        $accessToken = $this->_getAccessToken();
+        $tokenData   = json_decode($accessToken, true);
+        $scopes      = explode(" ", $tokenData['scope']);
+        $orgkey      = $tokenData['orgkey'];
+        $clientId    = $this->_clientId;
+        $oauthHost   = $this->_oauthHost;
+        $expires     = strtotime('+10 minutes');
+
+        if (empty($this->_clientSecret)) {
+            throw new Exception("Client Secret required for URL Generation");
+        }
+
+        if (!in_array($resource, $scopes)) {
+            throw new Exception("You do not have access to the '{$resource}' resource (not in your access token scope)");
+        }
+
+        $url = "https://{$oauthHost}/frontend/application/launch-pad/api-redirect?orgkey=" . urlencode($orgkey);
+        $url .= "&resource=" . urlencode($resource);
+        $url .= "&id=" . urlencode($id);
+        $url .= "&expires=" . urlencode($expires);
+        $url .= "&client_id=" . urlencode($clientId);
+        $url .= "&signature=" . urlencode(base64_encode(hash_hmac('sha512', $url, $this->_clientSecret, true)));
+        return $url;
+    }
+
     public function revokeToken() {
         $this->_clearAccessToken();
         return $this;
@@ -211,7 +249,7 @@ class Actionstep_Api_oAuthClient {
         // test the response
         $body = $response->getBody();
         $tokenData = json_decode($body, true);
-        $expectedKeys = array('access_token','expires_in','refresh_token','token_type','api_endpoint');
+        $expectedKeys = array('access_token','expires_in','refresh_token','token_type','api_endpoint','orgkey');
         foreach ($expectedKeys as $key) {
             if (array_key_exists($key, $tokenData) === false) {
                 // Weird! possibly an error actionstep end which didn't change the HTTP status from 200

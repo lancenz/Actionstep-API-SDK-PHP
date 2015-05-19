@@ -21,6 +21,18 @@ class Actionstep_Api_ResourceHelper {
         return $instance;
     }
 
+    /**
+     * @param string|Actionstep_Api_Resources_Abstract $resource
+     * @param string|int $id
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function generateUserInterFaceUrl($resource, $id) {
+        $resourceName = $this->getResourceNameFromResource($resource);
+        return $this->_oauth->generateUserInterfaceUrl($resourceName, $id);
+    }
+
     public function normalizeGetUrlOptions($resource, $options) {
         $return = array(
             'include'   => array(),

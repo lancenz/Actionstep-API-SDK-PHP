@@ -13,12 +13,12 @@
  * @property string $suffix
  * @property string $preferredName
  * @property string $physicalAddressLine1
- * @property string $physicalAddressLine1
+ * @property string $physicalAddressLine2
  * @property string $physicalCity
  * @property string $physicalStateProvince
  * @property string $physicalPostCode
  * @property string $mailingAddressLine1
- * @property string $mailingAddressLine1
+ * @property string $mailingAddressLine2
  * @property string $mailingCity
  * @property string $mailingStateProvince
  * @property string $mailingPostCode
@@ -78,12 +78,12 @@ class Actionstep_Api_Resources_Participants extends Actionstep_Api_Resources_Abs
         'suffix'                => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>true,'required'=>false,'readOnly'=>false),
         'preferredName'         => array('fieldType'=>'attribute','dataType'=>'varchar.50','default'=>false,'required'=>false,'readOnly'=>false),
         'physicalAddressLine1'  => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>true,'required'=>false,'readOnly'=>false),
-        'physicalAddressLine1'  => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>true,'required'=>false,'readOnly'=>false),
+        'physicalAddressLine2'  => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>true,'required'=>false,'readOnly'=>false),
         'physicalCity'          => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>true,'required'=>false,'readOnly'=>false),
         'physicalStateProvince' => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>true,'required'=>false,'readOnly'=>false),
         'physicalPostCode'      => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>true,'required'=>false,'readOnly'=>false),
         'mailingAddressLine1'   => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>false,'required'=>false,'readOnly'=>false),
-        'mailingAddressLine1'   => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>false,'required'=>false,'readOnly'=>false),
+        'mailingAddressLine2'   => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>false,'required'=>false,'readOnly'=>false),
         'mailingCity'           => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>false,'required'=>false,'readOnly'=>false),
         'mailingStateProvince'  => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>false,'required'=>false,'readOnly'=>false),
         'mailingPostCode'       => array('fieldType'=>'attribute','dataType'=>'varchar','default'=>false,'required'=>false,'readOnly'=>false),

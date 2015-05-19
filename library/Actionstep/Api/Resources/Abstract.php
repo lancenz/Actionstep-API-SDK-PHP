@@ -33,6 +33,11 @@ class Actionstep_Api_Resources_Abstract {
         }
     }
 
+    public function generateUserInterFaceUrl() {
+
+        return Actionstep_Api_ResourceHelper::getInstance()->generateUserInterFaceUrl($this, $this->__get('id'));
+    }
+
     /**
      * @param string $id
      * @return $this
