@@ -129,6 +129,7 @@ class Actionstep_Api_ResourceHelper {
 
             @unlink($tmpFile);
             if ($response->getStatusCode() <> 200) {
+                fclose($fp);
                 throw new Exception("File upload failed; " . $response->getStatusCode() . ": ". $response->getStatusText());
             }
             $json = json_decode($response->getBody(), true);
@@ -136,6 +137,7 @@ class Actionstep_Api_ResourceHelper {
             $id = $json['files']['id'];
 
         }
+        fclose($fp);
         return $id;
     }
 
