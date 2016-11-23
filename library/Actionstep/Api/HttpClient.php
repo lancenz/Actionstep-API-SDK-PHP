@@ -16,6 +16,7 @@ class Actionstep_Api_HttpClient {
     private $_authUser=null;
     private $_authPass=null;
     private $_userAgent=null;
+    private $_files=array();
 
     public function __construct($userAgent) {
         $this->_userAgent = $userAgent;
@@ -140,11 +141,20 @@ class Actionstep_Api_HttpClient {
         }
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        switch ($this->_method) {
-            case 'POST':
-            case 'PUT':
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $this->_body);
-                break;
+        if (!empty($this->_files)) {
+            $data = array();
+            foreach ($this->_files as $name => $tmpFilename) {
+                $data[$name] = curl_file_create($tmpFilename, "application/octet-stream", $name);
+            }
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        } else {
+            switch ($this->_method) {
+                case 'POST':
+                case 'PUT':
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $this->_body);
+                    break;
+            }
+
         }
         $rawResponse = curl_exec($curl);
         // cURL automatically decodes chunked-messages, this means we have to disallow the Zend_Http_Response to do it again
@@ -221,5 +231,12 @@ class Actionstep_Api_HttpClient {
 
     public function getUrl() {
         return $this->_url;
+    }
+
+    public function addFile($name, $localFilename) {
+        $this->setHeader("Content-Type", "multipart/form-data");
+        $this->setMethod("POST");
+        $this->_files[$name] = $localFilename;
+        return $this;
     }
 }

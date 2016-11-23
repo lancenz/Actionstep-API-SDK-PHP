@@ -90,6 +90,55 @@ class Actionstep_Api_ResourceHelper {
         return $this->makeGetRequest($url);
     }
 
+
+
+    public function uploadFile($localFilename) {
+
+        $filesize       = filesize($localFilename);
+        $maxBufferSize  = 5 * 1024 * 1024; // 5mb
+        $partCount      = ceil($filesize / $maxBufferSize);
+        $fp             = fopen($localFilename, "r");
+        $id             = null;
+        for ($partNumber = 1; $partNumber <= $partCount; $partNumber++) {
+
+            // read another 5mb, or the remainder of the file
+            if ($partNumber < $partCount) {
+                $bufferLen = 5 * 1024 * 1024;
+            } else {
+                $bufferLen = $filesize - (($partCount - 1) * $maxBufferSize);
+            }
+            $buffer = fread($fp, $bufferLen);
+
+            $tmpFile = tempnam(sys_get_temp_dir(), "actionstep-api-tmp");
+            file_put_contents($tmpFile, $buffer);
+
+
+            $url = "/api/rest/files";
+            if (!empty($id)) {
+                $url .= "/{$id}";
+            }
+            $url .= "?part_count={$partCount}&part_number={$partNumber}";
+
+            $httpClient = new Actionstep_Api_HttpClient($this->_oauth->getUserAgent());
+            $httpClient->setMethod('POST');
+            $httpClient->setHeader("Accept", "application/vnd.api+json");
+            $httpClient->addFile("file", $tmpFile);
+            $httpClient->setUrl($url);
+            $httpClient = $this->_oauth->addAuthenticationToHttpRequest($httpClient);
+            $response   = $httpClient->send();
+
+            @unlink($tmpFile);
+            if ($response->getStatusCode() <> 200) {
+                throw new Exception("File upload failed; " . $response->getStatusCode() . ": ". $response->getStatusText());
+            }
+            $json = json_decode($response->getBody(), true);
+
+            $id = $json['files']['id'];
+
+        }
+        return $id;
+    }
+
     /**
      * @param $url
      * @return bool|Actionstep_Api_Response_Get returns false if no results found
